@@ -1,4 +1,7 @@
+#include <Wire.h>
+#include <SPI.h>
 #include <IRremote.h>
+#include <Adafruit_GFX.h>
 #include "Adafruit_SSD1306.h"
 #include "SHT1x.h"
 

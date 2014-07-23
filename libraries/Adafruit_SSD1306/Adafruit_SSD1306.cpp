@@ -327,7 +327,7 @@ void Adafruit_SSD1306::begin(uint8_t vccstate, uint8_t i2caddr, bool reset) {
     ssd1306_command(SSD1306_NORMALDISPLAY);                 // 0xA6
   #endif
 
-  if (reset && rest == -1) {
+  if (reset && rst == -1) {
     ssd1306_command( 0x21, 0, 127 ); 
     ssd1306_command( 0x22, 0,   7 ); 
     stopscroll();
@@ -371,7 +371,7 @@ void Adafruit_SSD1306::ssd1306_command(uint8_t c) {
 }
 
 void Adafruit_SSD1306::ssd1306_command(uint8_t c0, uint8_t c1, uint8_t c2) {
-  char buff[4] ;
+  uint8_t buff[4] ;
   
   buff[0] = 0x00;
   buff[1] = c0;
