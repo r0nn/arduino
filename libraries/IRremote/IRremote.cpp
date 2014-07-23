@@ -1158,7 +1158,7 @@ void IRsend::sendDISH(unsigned long data, int nbits)
   }
 }
 
-void IRsend::sendMediaData(unsigned long long d, int nbits, bool sendSplit)
+void IRsend::sendMideaData(unsigned long long d, int nbits, bool sendSplit)
 {
   unsigned long long data = d << (64 - nbits);
   
@@ -1182,25 +1182,25 @@ void IRsend::sendMediaData(unsigned long long d, int nbits, bool sendSplit)
   }
 }
 
-void IRsend::sendMedia(unsigned long long data, int nbits) {
+void IRsend::sendMidea(unsigned long long data, int nbits) {
   enableIROut(38);
   // send data
-  sendMediaData(data, nbits, false);
+  sendMideaData(data, nbits, false);
 
   // repeat
-  sendMediaData(data, nbits, true);
+  sendMideaData(data, nbits, true);
 
   mark(MEDIA_BIT_MARK);
   space(0);
 }
 
-void IRsend::sendMedia(unsigned long long data[], int nbits) {
+void IRsend::sendMidea(unsigned long long data[], int nbits) {
   int len = sizeof(data);
   enableIROut(38);
 
-  sendMediaData(data[0], nbits, false);
+  sendMideaData(data[0], nbits, false);
   for (int i = 1; i < len; i++) {
-    sendMediaData(data[i], nbits, true);
+    sendMideaData(data[i], nbits, true);
   }
 
   mark(MEDIA_BIT_MARK);
