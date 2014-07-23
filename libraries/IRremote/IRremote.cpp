@@ -1163,20 +1163,20 @@ void IRsend::sendMideaData(unsigned long long d, int nbits, bool sendSplit)
   unsigned long long data = d << (64 - nbits);
   
   if (sendSplit) {
-    mark(MEDIA_BIT_MARK);
-    space(MEDIA_SPLIT_SPACE);
+    mark(MIDEA_BIT_MARK);
+    space(MIDEA_SPLIT_SPACE);
   }
 
-  mark(MEDIA_HDR_MARK);
-  space(MEDIA_HDR_SPACE);
+  mark(MIDEA_HDR_MARK);
+  space(MIDEA_HDR_SPACE);
   for (int i = 0; i < nbits; i++) {
     if (data & TOPBIT_64) {
-      mark(MEDIA_BIT_MARK);
-      space(MEDIA_ONE_SPACE);
+      mark(MIDEA_BIT_MARK);
+      space(MIDEA_ONE_SPACE);
     } 
     else {
-      mark(MEDIA_BIT_MARK);
-      space(MEDIA_ZERO_SPACE);
+      mark(MIDEA_BIT_MARK);
+      space(MIDEA_ZERO_SPACE);
     }
     data <<= 1;
   }
@@ -1190,7 +1190,7 @@ void IRsend::sendMidea(unsigned long long data, int nbits) {
   // repeat
   sendMideaData(data, nbits, true);
 
-  mark(MEDIA_BIT_MARK);
+  mark(MIDEA_BIT_MARK);
   space(0);
 }
 
@@ -1203,6 +1203,6 @@ void IRsend::sendMidea(unsigned long long data[], int nbits) {
     sendMideaData(data[i], nbits, true);
   }
 
-  mark(MEDIA_BIT_MARK);
+  mark(MIDEA_BIT_MARK);
   space(0);
 }
