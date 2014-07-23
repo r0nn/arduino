@@ -157,7 +157,7 @@ Adafruit_GFX(SSD1306_LCDWIDTH, SSD1306_LCDHEIGHT) {
   rst = reset;
 }
 
-// initializer for I2C - we only indicate the reset pin!
+// initializer for I2C - without reset pin!
 Adafruit_SSD1306::Adafruit_SSD1306() :
 Adafruit_GFX(SSD1306_LCDWIDTH, SSD1306_LCDHEIGHT) {
   sclk = dc = cs = sid = rst = -1;
