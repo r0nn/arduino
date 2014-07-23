@@ -73,71 +73,6 @@ int MATCH_SPACE(int measured_ticks, int desired_us) {return MATCH(measured_ticks
 // Debugging versions are in IRremote.cpp
 #endif
 
-void IRsend::sendMedia(unsigned long data1, unsigned long data2, int nbits)
-{
-  unsigned long d1,d2, d3, d4;
-  data1 = data1 << (32 - nbits);
-  data2 = data2 << (32 - nbits);
-  d1 = data1;
-  d2 = data2;
-  d3 = data1;
-  d4 = data2;
-  
-  enableIROut(38);
-  mark(MEDIA_HDR_MARK);
-  space(MEDIA_HDR_SPACE);
-  for (int i = 0; i < nbits; i++) {
-    if (d1 & TOPBIT) {
-      mark(MEDIA_BIT_MARK);
-      space(MEDIA_ONE_SPACE);
-    } 
-    else {
-      mark(MEDIA_BIT_MARK);
-      space(MEDIA_ZERO_SPACE);
-    }
-    d1 <<= 1;
-  }
-  for (int i = 0; i < nbits; i++) {
-    if (d2 & TOPBIT) {
-      mark(MEDIA_BIT_MARK);
-      space(MEDIA_ONE_SPACE);
-    } 
-    else {
-      mark(MEDIA_BIT_MARK);
-      space(MEDIA_ZERO_SPACE);
-    }
-    d2 <<= 1;
-  }
-  mark(MEDIA_BIT_MARK);
-  space(MEDIA_RPT_SPACE);
-  mark(MEDIA_HDR_MARK);
-  space(MEDIA_HDR_SPACE);
-  for (int i = 0; i < nbits; i++) {
-    if (d3 & TOPBIT) {
-      mark(MEDIA_BIT_MARK);
-      space(MEDIA_ONE_SPACE);
-    } 
-    else {
-      mark(MEDIA_BIT_MARK);
-      space(MEDIA_ZERO_SPACE);
-    }
-    d3 <<= 1;
-  }
-  for (int i = 0; i < nbits; i++) {
-    if (d4 & TOPBIT) {
-      mark(MEDIA_BIT_MARK);
-      space(MEDIA_ONE_SPACE);
-    } 
-    else {
-      mark(MEDIA_BIT_MARK);
-      space(MEDIA_ZERO_SPACE);
-    }
-    d4 <<= 1;
-  }
-  mark(MEDIA_BIT_MARK);
-  space(0);
-}
-
 void IRsend::sendNEC(unsigned long data, int nbits)
 {
   enableIROut(38);
@@ -1221,4 +1156,53 @@ void IRsend::sendDISH(unsigned long data, int nbits)
     }
     data <<= 1;
   }
+}
+
+void IRsend::sendMediaData(unsigned long long d, int nbits, bool sendSplit)
+{
+  unsigned long long data = d << (64 - nbits);
+  
+  if (sendSplit) {
+    mark(MEDIA_BIT_MARK);
+    space(MEDIA_SPLIT_SPACE);
+  }
+
+  mark(MEDIA_HDR_MARK);
+  space(MEDIA_HDR_SPACE);
+  for (int i = 0; i < nbits; i++) {
+    if (data & TOPBIT_64) {
+      mark(MEDIA_BIT_MARK);
+      space(MEDIA_ONE_SPACE);
+    } 
+    else {
+      mark(MEDIA_BIT_MARK);
+      space(MEDIA_ZERO_SPACE);
+    }
+    data <<= 1;
+  }
+}
+
+void IRsend::sendMedia(unsigned long long data, int nbits) {
+  enableIROut(38);
+  // send data
+  sendMediaData(data, nbits, false);
+
+  // repeat
+  sendMediaData(data, nbits, true);
+
+  mark(MEDIA_BIT_MARK);
+  space(0);
+}
+
+void IRsend::sendMedia(unsigned long long data[], int nbits) {
+  int len = sizeof(data);
+  enableIROut(38);
+
+  sendMediaData(data[0], nbits, false);
+  for (int i = 1; i < len; i++) {
+    sendMediaData(data[i], nbits, true);
+  }
+
+  mark(MEDIA_BIT_MARK);
+  space(0);
 }

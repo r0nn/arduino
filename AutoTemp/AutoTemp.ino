@@ -28,7 +28,7 @@ void setup()
 //  lcd.clear();				//液晶清屏
   
   // IR send
-  irsend.sendMedia(0xb24d9f, 0x60a05f, 24);
+  irsend.sendMedia(0xb24d9f60a05fLL, 48);
 //  irsend.sendRaw(rawCodes_ac_29, 199, 38);
 //  lcd.clear();
 //  lcd.print("29 send");

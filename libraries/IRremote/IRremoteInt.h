@@ -102,7 +102,7 @@
 #define MEDIA_BIT_MARK 540
 #define MEDIA_ONE_SPACE 1620
 #define MEDIA_ZERO_SPACE 540
-#define MEDIA_RPT_SPACE 5220
+#define MEDIA_SPLIT_SPACE 5220
 
 #define SONY_HDR_MARK	2400
 #define SONY_HDR_SPACE	600
@@ -219,6 +219,7 @@ extern volatile irparams_t irparams;
 #define SPACE 1
 
 #define TOPBIT 0x80000000
+#define TOPBIT_64 0x8000000000000000LL
 
 #define NEC_BITS 32
 #define SONY_BITS 12
