@@ -12,12 +12,17 @@ U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE);
 #define dataPin 10
 #define clockPin 11
 SHT1x sht1x(dataPin, clockPin);
+
+#define KEY 12
   
 float temp;
 float temp_f;
 float humidity;
 
 int ac_temp;
+unsigned long timer;
+boolean key_pressed = false;
+boolean oled_sleep = false;
 
 void display()
 { 
@@ -43,20 +48,36 @@ void display()
 
 void controlac()
 {
-  if (temp > 28.5 && ac_temp != 28)
+  if (temp > 28.3 && ac_temp != 28)
   {
     irsend.sendMidea(0xb24d9f60807fLL, 48);
     ac_temp = 28;
   }
-  else if (temp < 26.2 && ac_temp != 29)
+  else if (temp < 26.4 && ac_temp != 29)
   {
     irsend.sendMidea(0xb24d9f60a05fLL, 48);
     ac_temp = 29;
   }
 }
 
+void scankey()
+{
+  if (digitalRead(KEY) == LOW)
+  {
+    delay(20);
+    if (digitalRead(KEY) == LOW)
+    {
+      key_pressed = true;
+      while (digitalRead(KEY) == LOW);
+    }
+  }
+}
+
 void setup()
 {
+  Serial.begin(9600);
+  pinMode(KEY,INPUT_PULLUP);
+  
   // IR send
   // irsend.sendMidea(0xb24d9f6040bfLL, 48);
   // delay(4000);
@@ -67,18 +88,37 @@ void setup()
 
 void loop()
 {
-  // Read values from the sensor
-  temp = sht1x.readTemperatureC();
-  temp_f = sht1x.readTemperatureF();
-  humidity = sht1x.readHumidity();
-
-  controlac();
-
-  // picture loop
-  u8g.firstPage();  
-  do {
-    display();
-  } while( u8g.nextPage() );
+  if (millis() - timer > 1000UL)
+  {
+    timer = millis();
+    
+    // Read values from the sensor
+    temp = sht1x.readTemperatureC();
+    temp_f = sht1x.readTemperatureF();
+    humidity = sht1x.readHumidity();
   
-  delay(1000);
+    controlac();
+  
+    // picture loop
+    u8g.firstPage();  
+    do {
+      display();
+    } while( u8g.nextPage() );
+  }
+  
+  scankey();
+  if (key_pressed)
+  {
+    key_pressed = false;
+    if (oled_sleep)
+    {
+      u8g.sleepOff();
+      oled_sleep = false;
+    }
+    else
+    {
+      u8g.sleepOn();
+      oled_sleep = true;
+    }
+  }
 }
