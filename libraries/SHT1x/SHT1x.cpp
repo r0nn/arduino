@@ -168,6 +168,8 @@ void SHT1x::sendCommandSHT(int _command, int _dataPin, int _clockPin)
   // Verify we get the correct ack
   digitalWrite(_clockPin, HIGH);
   pinMode(_dataPin, INPUT);
+  // internal pull-up
+  digitalWrite(_dataPin, OUTPUT);
   ack = digitalRead(_dataPin);
   if (ack != LOW) {
     //Serial.println("Ack Error 0");
@@ -187,6 +189,8 @@ void SHT1x::waitForResultSHT(int _dataPin)
   int ack;
 
   pinMode(_dataPin, INPUT);
+  // internal pull-up
+  digitalWrite(_dataPin, OUTPUT);
 
   for(i= 0; i < 100; ++i)
   {
@@ -211,6 +215,8 @@ int SHT1x::getData16SHT(int _dataPin, int _clockPin)
 
   // Get the most significant bits
   pinMode(_dataPin, INPUT);
+  // internal pull-up
+  digitalWrite(_dataPin, OUTPUT);
   pinMode(_clockPin, OUTPUT);
   val = shiftIn(_dataPin, _clockPin, 8);
   val *= 256;
@@ -224,6 +230,8 @@ int SHT1x::getData16SHT(int _dataPin, int _clockPin)
 
   // Get the least significant bits
   pinMode(_dataPin, INPUT);
+  // internal pull-up
+  digitalWrite(_dataPin, OUTPUT);
   val |= shiftIn(_dataPin, _clockPin, 8);
 
   return val;
