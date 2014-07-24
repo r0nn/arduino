@@ -21,6 +21,7 @@ float humidity;
 
 int ac_temp;
 unsigned long timer;
+unsigned long ac_timer;
 boolean key_pressed = false;
 boolean oled_sleep = false;
 
@@ -48,15 +49,17 @@ void display()
 
 void controlac()
 {
-  if (temp > 28.3 && ac_temp != 28)
+  if (temp > 27.8 && (ac_temp != 28 || millis() - ac_timer > 300000UL))
   {
     irsend.sendMidea(0xb24d9f60807fLL, 48);
     ac_temp = 28;
+    ac_timer = millis();
   }
-  else if (temp < 26.4 && ac_temp != 29)
+  else if (temp < 26.3 && (ac_temp != 29 || millis() - ac_timer > 300000UL))
   {
     irsend.sendMidea(0xb24d9f60a05fLL, 48);
     ac_temp = 29;
+    ac_timer = millis();
   }
 }
 
