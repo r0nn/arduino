@@ -13,7 +13,7 @@ U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE);
 #define clockPin 11
 SHT1x sht1x(dataPin, clockPin);
 
-#define KEY 12
+#define KEY 7
   
 float temp;
 float temp_f;
@@ -49,13 +49,24 @@ void display()
 
 void controlac()
 {
-  if (temp > 27.8 && (ac_temp != 28 || millis() - ac_timer > 300000UL))
+  if (temp > 28.2 && (ac_temp > 27 || millis() - ac_timer > 500000UL))
+  {
+    irsend.sendMidea(0xb24d9f60906fLL, 48);
+    ac_temp = 27;
+    ac_timer = millis();
+  }
+  else if (temp < 27.8 && ac_temp < 28)
+  {
+    irsend.sendMidea(0xb24d9f60807fLL, 48);
+    ac_temp = 28;
+  }
+  else if (temp > 27.5 && (ac_temp > 28 || millis() - ac_timer > 500000UL))
   {
     irsend.sendMidea(0xb24d9f60807fLL, 48);
     ac_temp = 28;
     ac_timer = millis();
   }
-  else if (temp < 26.3 && (ac_temp != 29 || millis() - ac_timer > 300000UL))
+  else if (temp < 26.3 && (ac_temp != 29 || millis() - ac_timer > 500000UL))
   {
     irsend.sendMidea(0xb24d9f60a05fLL, 48);
     ac_temp = 29;
